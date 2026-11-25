@@ -86,9 +86,9 @@ class TodoApp(ft.Column):
         self.filter = ft.TabBar(
             scrollable=False,
             tabs=[
-                ft.Tab(label="all"),
-                ft.Tab(label="active"),
-                ft.Tab(label="completed"),
+                ft.Tab(label="Ingreso de Libros"),
+                ft.Tab(label="Ingreso de Usuarios"),
+                ft.Tab(label="Prestamos y Devoluciones"),
             ],
         )
 
@@ -139,9 +139,9 @@ class TodoApp(ft.Column):
         status = self.filter.tabs[self.filter_tabs.selected_index].label
         for task in self.tasks.controls:
             task.visible = (
-                status == "all"
-                or (status == "active" and not task.completed)
-                or (status == "completed" and task.completed)
+                status == "Ingreso de Libros"
+                or (status == "Ingreso de Usuarios" and not task.completed)
+                or (status == "Prestamos y Devoluciones" and task.completed)
             )
 
     def tabs_changed(self, e):
@@ -149,7 +149,7 @@ class TodoApp(ft.Column):
 
 
 def main(page: ft.Page):
-    page.title = "To-Do App"
+    page.title = "Sistema de Biblioteca"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.update()
 
