@@ -116,6 +116,9 @@ class Biblioteca:
             raise BibliotecaError("Selecciona un libro y un cliente.")
         if not libro.disponible:
             raise BibliotecaError("El libro ya está prestado.")
+        cantidad = sum(1 for p in self.prestamos if p.cliente is cliente)
+        if cantidad >= 3:
+            raise BibliotecaError("El cliente ya tiene 3 libros prestados.")
         libro.disponible = False
         prestamo = Prestamo(libro, cliente, date.today())
         self.prestamos.append(prestamo)
