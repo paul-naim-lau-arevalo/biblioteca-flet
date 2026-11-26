@@ -8,6 +8,17 @@ from PrestamoLibro import VistaPrestamos
 
 def main(page: ft.Page):
     page.title = "Sistema de Control de Biblioteca"
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.bgcolor = "#F8F2E9"
+    page.theme = ft.Theme(
+        color_scheme_seed="#80594F",
+        color_scheme=ft.ColorScheme(
+            primary="#80594F", on_primary="#FFFFFF",
+            surface="#F8F2E9", on_surface="#321813",
+            outline="#B18B58",
+        ),
+        divider_color="#B18B58",
+    )
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.padding = 20
 
@@ -37,6 +48,10 @@ def main(page: ft.Page):
             expand=True,
             controls=[
                 ft.TabBar(
+                    label_color="#654038",
+                    unselected_label_color="#321813",
+                    indicator_color="#80594F",
+                    divider_color="#B18B58",
                     tabs=[
                         ft.Tab(label="Ingreso de Libros"),
                         ft.Tab(label="Ingreso de Usuarios"),
@@ -45,7 +60,29 @@ def main(page: ft.Page):
                 ),
                 ft.TabBarView(
                     expand=True,
-                    controls=[vista_libros, vista_usuarios, vista_prestamos],
+                    controls=[
+                        ft.Container(
+                            content=vista_libros,
+                            bgcolor="#EADCC8",
+                            padding=20,
+                            border_radius=12,
+                            border=ft.Border.all(1, "#C3A174"),
+                        ),
+                        ft.Container(
+                            content=vista_usuarios,
+                            bgcolor="#EADCC8",
+                            padding=20,
+                            border_radius=12,
+                            border=ft.Border.all(1, "#C3A174"),
+                        ),
+                        ft.Container(
+                            content=vista_prestamos,
+                            bgcolor="#EADCC8",
+                            padding=20,
+                            border_radius=12,
+                            border=ft.Border.all(1, "#C3A174"),
+                        ),
+                    ],
                 ),
             ],
         ),
