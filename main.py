@@ -1,4 +1,3 @@
-
 import flet as ft
 
 from biblioteca import Biblioteca
@@ -36,51 +35,75 @@ def main(page: ft.Page):
     vista_usuarios = VistaUsuarios(biblioteca, notificar)
     vista_prestamos = VistaPrestamos(biblioteca, notificar)
 
-    # Contador de préstamos activos
-    numero_prestamos = ft.Text(
-        str(len(biblioteca.prestamos)),
-        size=32,
-        weight=ft.FontWeight.BOLD,
-        color="#FFFFFF",
+    # ---------- Dashboard ----------
+    def crear_tarjeta(icono, titulo, valor, subtitulo, color):
+        texto_valor = ft.Text(
+            str(valor),
+            size=32,
+            weight=ft.FontWeight.BOLD,
+            color="#FFFFFF",
+        )
+        tarjeta = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Icon(icono, size=40, color="#FFFFFF"),
+                    ft.Column(
+                        controls=[
+                            ft.Text(titulo, size=16, color="#FFFFFF"),
+                            texto_valor,
+                            ft.Text(subtitulo, size=11, color="#F8F2E9"),
+                        ],
+                        spacing=3,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=20,
+            ),
+            bgcolor=color,
+            padding=20,
+            border_radius=15,
+            width=350,
+        )
+        return tarjeta, texto_valor
+
+    tarjeta_libros, numero_libros = crear_tarjeta(
+        ft.Icons.MENU_BOOK,
+        "Libros Registrados",
+        len(biblioteca.libros),
+        "Total en el catálogo",
+        "#654038",
+    )
+    tarjeta_clientes, numero_clientes = crear_tarjeta(
+        ft.Icons.PEOPLE,
+        "Clientes Registrados",
+        len(biblioteca.clientes),
+        "Miembros de la biblioteca",
+        "#B18B58",
+    )
+    tarjeta_prestamos, numero_prestamos = crear_tarjeta(
+        ft.Icons.BOOK,
+        "Préstamos Activos",
+        len(biblioteca.prestamos),
+        "Libros pendientes de devolución",
+        "#80594F",
     )
 
-    tarjeta_prestamos = ft.Container(
-        content=ft.Row(
-            controls=[
-                ft.Icon(
-                    ft.Icons.BOOK,
-                    size=40,
-                    color="#FFFFFF",
-                ),
-                ft.Column(
-                    controls=[
-                        ft.Text(
-                            "Préstamos Activos",
-                            size=16,
-                            color="#FFFFFF",
-                        ),
-                        numero_prestamos,
-                        ft.Text(
-                            "Libros pendientes de devolución",
-                            size=11,
-                            color="#F8F2E9",
-                        ),
-                    ],
-                    spacing=3,
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=20,
-        ),
-        bgcolor="#80594F",
-        padding=20,
-        border_radius=15,
-        width=350,
+    dashboard = ft.Row(
+        controls=[tarjeta_libros, tarjeta_clientes, tarjeta_prestamos],
+        alignment=ft.MainAxisAlignment.CENTER,
+        wrap=True,
+        spacing=15,
+        run_spacing=15,
     )
+
+    def actualizar_dashboard():
+        numero_libros.value = str(len(biblioteca.libros))
+        numero_clientes.value = str(len(biblioteca.clientes))
+        numero_prestamos.value = str(len(biblioteca.prestamos))
 
     def actualizar_datos():
         vista_libros.refrescar()
-        numero_prestamos.value = str(len(biblioteca.prestamos))
+        actualizar_dashboard()
         page.update()
 
     # Actualizar datos después de prestar o devolver
@@ -90,7 +113,7 @@ def main(page: ft.Page):
         for vista in (vista_libros, vista_usuarios, vista_prestamos):
             vista.refrescar()
 
-        numero_prestamos.value = str(len(biblioteca.prestamos))
+        actualizar_dashboard()
         page.update()
 
     tabs = ft.Tabs(
@@ -109,45 +132,5 @@ def main(page: ft.Page):
                     tabs=[
                         ft.Tab(label="Ingreso de Libros"),
                         ft.Tab(label="Ingreso de Usuarios"),
-                        ft.Tab(label="Préstamos y Devoluciones"),
-                    ],
-                ),
-                ft.TabBarView(
-                    expand=True,
-                    controls=[
-                        ft.Container(
-                            content=vista_libros,
-                            bgcolor="#EADCC8",
-                            padding=20,
-                            border_radius=12,
-                            border=ft.Border.all(1, "#C3A174"),
-                        ),
-                        ft.Container(
-                            content=vista_usuarios,
-                            bgcolor="#EADCC8",
-                            padding=20,
-                            border_radius=12,
-                            border=ft.Border.all(1, "#C3A174"),
-                        ),
-                        ft.Container(
-                            content=vista_prestamos,
-                            bgcolor="#EADCC8",
-                            padding=20,
-                            border_radius=12,
-                            border=ft.Border.all(1, "#C3A174"),
-                        ),
-                    ],
-                ),
-            ],
-        ),
-    )
-
-    page.add(
-        tarjeta_prestamos,
-        tabs,
-    )
-
-
-if __name__ == "__main__":
-    ft.run(main)
+                        ft.Tab(label="Préstamos y Devoluciones
 
