@@ -1,3 +1,4 @@
+
 import flet as ft
 
 from biblioteca import Biblioteca
@@ -10,15 +11,19 @@ def main(page: ft.Page):
     page.title = "Sistema de Control de Biblioteca"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.bgcolor = "#F8F2E9"
+
     page.theme = ft.Theme(
         color_scheme_seed="#80594F",
         color_scheme=ft.ColorScheme(
-            primary="#80594F", on_primary="#FFFFFF",
-            surface="#F8F2E9", on_surface="#321813",
+            primary="#80594F",
+            on_primary="#FFFFFF",
+            surface="#F8F2E9",
+            on_surface="#321813",
             outline="#B18B58",
         ),
         divider_color="#B18B58",
     )
+
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.padding = 20
 
@@ -31,13 +36,62 @@ def main(page: ft.Page):
     vista_usuarios = VistaUsuarios(biblioteca, notificar)
     vista_prestamos = VistaPrestamos(biblioteca, notificar)
 
-    # Actualizamos los libros después de un préstamo o devolución.
-    vista_prestamos.al_cambiar = vista_libros.refrescar
+    # Contador de préstamos activos
+    numero_prestamos = ft.Text(
+        str(len(biblioteca.prestamos)),
+        size=32,
+        weight=ft.FontWeight.BOLD,
+        color="#FFFFFF",
+    )
+
+    tarjeta_prestamos = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Icon(
+                    ft.Icons.BOOK,
+                    size=40,
+                    color="#FFFFFF",
+                ),
+                ft.Column(
+                    controls=[
+                        ft.Text(
+                            "Préstamos Activos",
+                            size=16,
+                            color="#FFFFFF",
+                        ),
+                        numero_prestamos,
+                        ft.Text(
+                            "Libros pendientes de devolución",
+                            size=11,
+                            color="#F8F2E9",
+                        ),
+                    ],
+                    spacing=3,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=20,
+        ),
+        bgcolor="#80594F",
+        padding=20,
+        border_radius=15,
+        width=350,
+    )
+
+    def actualizar_datos():
+        vista_libros.refrescar()
+        numero_prestamos.value = str(len(biblioteca.prestamos))
+        page.update()
+
+    # Actualizar datos después de prestar o devolver
+    vista_prestamos.al_cambiar = actualizar_datos
 
     def cambio_de_pestana(e):
-        # Actualizamos los datos al cambiar de pestaña.
         for vista in (vista_libros, vista_usuarios, vista_prestamos):
             vista.refrescar()
+
+        numero_prestamos.value = str(len(biblioteca.prestamos))
+        page.update()
 
     tabs = ft.Tabs(
         length=3,
@@ -56,7 +110,7 @@ def main(page: ft.Page):
                         ft.Tab(label="Ingreso de Libros"),
                         ft.Tab(label="Ingreso de Usuarios"),
                         ft.Tab(label="Préstamos y Devoluciones"),
-                    ]
+                    ],
                 ),
                 ft.TabBarView(
                     expand=True,
@@ -87,8 +141,13 @@ def main(page: ft.Page):
             ],
         ),
     )
-    page.add(tabs)
+
+    page.add(
+        tarjeta_prestamos,
+        tabs,
+    )
 
 
 if __name__ == "__main__":
     ft.run(main)
+
