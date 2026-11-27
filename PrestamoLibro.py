@@ -19,6 +19,8 @@ class VistaPrestamos(ft.Column):
                 ft.DataColumn(ft.Text("Libro")),
                 ft.DataColumn(ft.Text("Cliente")),
                 ft.DataColumn(ft.Text("Fecha")),
+                ft.DataColumn(ft.Text("Fecha límite")),
+                ft.DataColumn(ft.Text("Estado")),
                 ft.DataColumn(ft.Text("")),
             ],
             rows=[],
@@ -80,6 +82,14 @@ class VistaPrestamos(ft.Column):
                     ft.DataCell(ft.Text(p.libro.titulo)),
                     ft.DataCell(ft.Text(p.cliente.nombre)),
                     ft.DataCell(ft.Text(p.fecha.isoformat())),
+                    ft.DataCell(ft.Text(p.fecha_limite.isoformat())),
+                    ft.DataCell(
+                        ft.Text(
+                            f"Atrasado {p.dias_atraso} día(s)" if p.atrasado else "A tiempo",
+                            color=ft.Colors.RED if p.atrasado else ft.Colors.GREEN,
+                            weight=ft.FontWeight.BOLD,
+                        )
+                    ),
                     ft.DataCell(
                         ft.TextButton(
                             "Devolver",

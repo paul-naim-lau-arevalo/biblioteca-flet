@@ -35,7 +35,32 @@ def main(page: ft.Page):
     vista_usuarios = VistaUsuarios(biblioteca, notificar)
     vista_prestamos = VistaPrestamos(biblioteca, notificar)
 
-    # ---------- Dashboard ----------
+    encabezado = ft.Column(
+        controls=[
+            ft.Row(
+                controls=[
+                    ft.Icon(ft.Icons.LOCAL_LIBRARY, size=40, color="#80594F"),
+                    ft.Text(
+                        "Sistema de Control de Biblioteca",
+                        size=28,
+                        weight=ft.FontWeight.BOLD,
+                        color="#321813",
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=12,
+            ),
+            ft.Text(
+                "Gestión de libros, clientes y préstamos",
+                size=14,
+                color="#654038",
+            ),
+            ft.Divider(color="#B18B58", height=10),
+        ],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        spacing=4,
+    )
+
     def crear_tarjeta(icono, titulo, valor, subtitulo, color):
         texto_valor = ft.Text(
             str(valor),
@@ -106,7 +131,6 @@ def main(page: ft.Page):
         actualizar_dashboard()
         page.update()
 
-    # Actualizar datos después de prestar o devolver
     vista_prestamos.al_cambiar = actualizar_datos
 
     def cambio_de_pestana(e):
@@ -132,5 +156,45 @@ def main(page: ft.Page):
                     tabs=[
                         ft.Tab(label="Ingreso de Libros"),
                         ft.Tab(label="Ingreso de Usuarios"),
-                        ft.Tab(label="Préstamos y Devoluciones
+                        ft.Tab(label="Préstamos y Devoluciones"),
+                    ],
+                ),
+                ft.TabBarView(
+                    expand=True,
+                    controls=[
+                        ft.Container(
+                            content=vista_libros,
+                            bgcolor="#EADCC8",
+                            padding=20,
+                            border_radius=12,
+                            border=ft.Border.all(1, "#C3A174"),
+                        ),
+                        ft.Container(
+                            content=vista_usuarios,
+                            bgcolor="#EADCC8",
+                            padding=20,
+                            border_radius=12,
+                            border=ft.Border.all(1, "#C3A174"),
+                        ),
+                        ft.Container(
+                            content=vista_prestamos,
+                            bgcolor="#EADCC8",
+                            padding=20,
+                            border_radius=12,
+                            border=ft.Border.all(1, "#C3A174"),
+                        ),
+                    ],
+                ),
+            ],
+        ),
+    )
 
+    page.add(
+        encabezado,
+        dashboard,
+        tabs,
+    )
+
+
+if __name__ == "__main__":
+    ft.run(main)

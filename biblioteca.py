@@ -1,7 +1,8 @@
 # Clases y funciones del sistema de biblioteca
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
+DIAS_PRESTAMO = 7 
 
 
 class BibliotecaError(Exception):
@@ -30,6 +31,18 @@ class Prestamo:
     libro: Libro
     cliente: Cliente
     fecha: date
+
+    @property
+    def fecha_limite(self) -> date:
+        return self.fecha + timedelta(days=DIAS_PRESTAMO)
+
+    @property
+    def dias_atraso(self) -> int:
+        return max(0, (date.today() - self.fecha_limite).days)
+
+    @property
+    def atrasado(self) -> bool:
+        return self.dias_atraso > 0
 
 
 class Biblioteca:
@@ -131,3 +144,6 @@ class Biblioteca:
         prestamo.libro.disponible = True
         self.prestamos.remove(prestamo)
         return prestamo
+
+    def prestamos_atrasados(self) -> list[Prestamo]:
+        return [p for p in self.prestamos if p.atrasado]
