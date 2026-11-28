@@ -1,7 +1,8 @@
 # Clases y funciones del sistema de biblioteca
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
+DIAS_PRESTAMO = 7 
 
 
 class BibliotecaError(Exception):
@@ -30,6 +31,18 @@ class Prestamo:
     libro: Libro
     cliente: Cliente
     fecha: date
+
+    @property
+    def fecha_limite(self) -> date:
+        return self.fecha + timedelta(days=DIAS_PRESTAMO)
+
+    @property
+    def dias_atraso(self) -> int:
+        return max(0, (date.today() - self.fecha_limite).days)
+
+    @property
+    def atrasado(self) -> bool:
+        return self.dias_atraso > 0
 
 
 class Biblioteca:
@@ -90,6 +103,14 @@ class Biblioteca:
             raise BibliotecaError("El correo no es válido.")
         if self.buscar_cliente(cedula):
             raise BibliotecaError(f"Ya existe un cliente con la cédula {cedula}.")
+        if telefono and not telefono.isdigit():
+            raise BibliotecaError("El teléfono debe contener solo números.")
+        if correo and any(c.correo == correo for c in self.clientes):
+            raise BibliotecaError(f"Ya existe un cliente con el correo {correo}.")
+        if telefono and any(c.telefono == telefono for c in self.clientes):
+            raise BibliotecaError(f"Ya existe un cliente con el teléfono {telefono}.")
+        if cedula and any(c.cedula == cedula for c in self.clientes):
+            raise BibliotecaError(f"Ya existe un cliente con la cédula {cedula}.")
         cliente = Cliente(cedula, nombre, correo, telefono)
         self.clientes.append(cliente)
         return cliente
@@ -105,7 +126,7 @@ class Biblioteca:
         if cliente is None:
             raise BibliotecaError("El cliente no existe.")
         if any(p.cliente is cliente for p in self.prestamos):
-            raise BibliotecaError("No se puede eliminar un cliente con libros prestados.")
+            raise BibliotecaError("No se puede eliminar un cliente con libros prestados. Valida que el cliente no tenga préstamos activos antes de eliminarlo.")
         self.clientes.remove(cliente)
 
     # Préstamos
@@ -131,3 +152,6 @@ class Biblioteca:
         prestamo.libro.disponible = True
         self.prestamos.remove(prestamo)
         return prestamo
+
+    def prestamos_atrasados(self) -> list[Prestamo]:
+        return [p for p in self.prestamos if p.atrasado]

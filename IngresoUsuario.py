@@ -10,16 +10,16 @@ class VistaUsuarios(ft.Column):
         self.biblioteca = biblioteca
         self.notificar = notificar
         self.al_cambiar = al_cambiar
-
+        # casillas de ttexto para usuarios
         self.cedula = ft.TextField(label="Cédula", width=180)
-        self.nombre = ft.TextField(label="Nombre completo", expand=True)
-        self.correo = ft.TextField(label="Correo", expand=True)
+        self.nombre = ft.TextField(label="Nombre completo", width=300)
+        self.correo = ft.TextField(label="Correo", width=380, keyboard_type=ft.KeyboardType.EMAIL)
         self.telefono = ft.TextField(
             label="Teléfono", width=160, input_filter=ft.NumbersOnlyInputFilter()
         )
         self.tabla = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("Cédula")),
+                ft.DataColumn(ft.Text("Ingrese Cédula")),
                 ft.DataColumn(ft.Text("Nombre")),
                 ft.DataColumn(ft.Text("Correo")),
                 ft.DataColumn(ft.Text("Teléfono")),
